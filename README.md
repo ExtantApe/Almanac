@@ -2,7 +2,7 @@
 
 Runs server commands on a calendar for Paper: "on the 1st of every month, run this". It waits for a quiet moment and catches up after downtime.
 
-**Status:** 0.1.0, not released. 14 unit tests pass, and the bot test passes 18/18 on throwaway Paper 26.1.2, 26.2 and 26.3 servers, with a fake clock so months pass in seconds. On 26.2 it drove a copy of a real monthly data pack; on 26.1.2 and 26.3, a made-up stand-in pack. It hasn't run on a real server.
+**Status:** 0.1.0, the first release. 14 unit tests pass, and the bot test passes 18/18 on throwaway Paper 26.1.2, 26.2 and 26.3 servers, with a fake clock so months pass in seconds. On 26.2 it drove a copy of a real monthly data pack; on 26.1.2 and 26.3, a made-up stand-in pack. It hasn't run on a real server.
 
 ## What it does
 
@@ -50,4 +50,4 @@ All need `almanac.admin`, which operators have by default.
 
 ## License
 
-Not decided yet. Private repos carry no license.
+MIT. See `LICENSE`.
