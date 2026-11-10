@@ -1,0 +1,20 @@
+# Almanac runs console commands on a calendar. Apply changes with /almanac reload.
+#
+# Each schedule runs once a month, on the 1st, no earlier than not-before, in this time zone. If the server is off
+# then, it runs at the next start. A schedule with a quiet area waits while anyone is inside it, checking again every
+# retry-minutes, and runs anyway after give-up-after-hours. Almanac only logs to the console; it tells nobody in game.
+timezone: "UTC"                 # a zone name, such as Pacific/Honolulu
+
+schedules: {}
+# An example, with made-up names. Remove the {} above and fill in your own:
+#
+# schedules:
+#   monthly-course:
+#     every: month              # only month for now
+#     command: "function example:rotate {n:{month0}}"   # {month0} 0-11, {month} 1-12, {year}; no leading /
+#     not-before: "04:00"       # 24-hour time on the 1st
+#     quiet:
+#       world: example_world
+#       box: [0, 60, 0, 40, 90, 40]   # two opposite corners: x1, y1, z1, x2, y2, z2
+#       retry-minutes: 5
+#       give-up-after-hours: 6

@@ -1,0 +1,9 @@
+name: Almanac
+version: '${version}'
+main: com.extantape.almanac.AlmanacPlugin
+api-version: '26.1'
+description: Runs server commands on a calendar, waiting for a quiet moment and catching up after downtime.
+permissions:
+  almanac.admin:
+    description: See, run and preview Almanac's schedules.
+    default: op
