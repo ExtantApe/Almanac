@@ -63,7 +63,7 @@ const log = []
 let proc, exited
 async function start() {
   const from = log.length
-  proc = spawn(JAVA, ['-Xms1536M', '-Xmx1536M', '-Dterminal.jline=false', '-Dterminal.ansi=false', `-Dalmanac.test.clockFile=${CLOCK}`, '-Dalmanac.test.checkTicks=20',
+  proc = spawn(JAVA, ['-Xms1536M', '-Xmx1536M', '-Dterminal.jline=false', '-Dterminal.ansi=false', `-Dsundial.test.clockFile=${CLOCK}`, '-Dsundial.test.checkTicks=20',
     '-jar', 'paper.jar', 'nogui'], { cwd: dir, stdio: ['pipe', 'pipe', 'pipe'] })
   exited = new Promise(r => proc.on('exit', r))
   process.on('exit', () => { if (proc.exitCode === null) proc.kill('SIGKILL') })

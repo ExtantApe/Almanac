@@ -2,7 +2,7 @@
 
 Runs server commands on a calendar for Paper: "on the 1st of every month, run this". It waits for a quiet moment and catches up after downtime.
 
-**Status:** 0.2.0, renamed from Almanac (see below). 0.1.0 was the first release. 14 unit tests pass, and the bot test passes 18/18 on throwaway Paper 26.1.2, 26.2 and 26.3 servers, with a fake clock so months pass in seconds. On 26.2 it drove a copy of a real monthly data pack; on 26.1.2 and 26.3, a made-up stand-in pack. It hasn't run on a real server.
+**Status:** 0.2.0. 14 unit tests pass, and the bot test passes 18/18 on throwaway Paper 26.1.2, 26.2 and 26.3 servers, with a fake clock so months pass in seconds. On 26.2 it drove a copy of a real monthly data pack; on 26.1.2 and 26.3, a made-up stand-in pack. It hasn't run on a real server.
 
 ## What it does
 
@@ -32,14 +32,6 @@ schedules:
 ```
 
 Then run `/sundial reload` and `/sundial status`. On a first install, a schedule applies the current month straight away, at the first check after its `not-before` time.
-
-## Upgrading from Almanac
-
-Sundial was called Almanac up to 0.1.0. It was renamed because a popular Minecraft mod already uses that name. Nothing else changed.
-
-- With the server stopped, swap `Almanac-0.1.0.jar` for `Sundial-0.2.0.jar`.
-- On its first start, Sundial copies `plugins/Almanac/` to `plugins/Sundial/` if `plugins/Sundial/` doesn't exist yet, so your schedules and what they last applied come across unchanged. The old folder is left as it was; delete it once you're happy.
-- For 0.2.x only, `/almanac` still works and `almanac.admin` still grants `sundial.admin`. Both go in the next release.
 
 ## Commands
 

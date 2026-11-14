@@ -7,8 +7,3 @@ permissions:
   sundial.admin:
     description: See, run and preview Sundial's schedules.
     default: op
-  almanac.admin:
-    description: The old name for sundial.admin, from before the rename (D194). It grants sundial.admin, still works in 0.2.x, and is removed in the next release.
-    default: false
-    children:
-      sundial.admin: true

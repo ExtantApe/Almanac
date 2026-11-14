@@ -4,7 +4,7 @@
 
 | Promise | Proved by |
 | --- | --- |
-| Runs on the 1st, not before `not-before`, in the configured zone, not UTC | `AlmanacTest`: zone, 04:00 and daylight-saving cases. Bot test: 03:30 nothing, 04:01 runs |
+| Runs on the 1st, not before `not-before`, in the configured zone, not UTC | `SundialTest`: zone, 04:00 and daylight-saving cases. Bot test: 03:30 nothing, 04:01 runs |
 | Runs once per month, with the right placeholders | Unit tests; bot test "runs once, with the right month" |
 | Catches up once after downtime; a restart mid-month runs nothing; a first install applies the current month | Unit tests; bot test with two restarts |
 | Quiet rule: someone in the box delays it, leaving lets it run within one retry, staying past 6 hours runs it anyway, someone elsewhere doesn't delay it, a missing world never runs blind | Unit tests (fake clock); bot test with a bot in and out of the box |

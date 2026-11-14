@@ -39,9 +39,6 @@ public final class SundialPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Renamed from Almanac (D194): bring its folder across once, before anything reads the config.
-        String moved = Migration.copyIfMissing(getDataFolder().toPath().resolveSibling("Almanac"), getDataFolder().toPath());
-        if (moved != null) getLogger().warning(moved);
         saveDefaultConfig();
         String clockFile = System.getProperty(TEST_CLOCK);
         if (clockFile != null) {
@@ -70,9 +67,7 @@ public final class SundialPlugin extends JavaPlugin {
                     .suggests((c, b) -> { settings.schedules().keySet().forEach(b::suggest); return b.buildFuture(); })
                     .then(Commands.argument("month", IntegerArgumentType.integer(1, 12)).executes(this::preview))))
                 .build(),
-            "Status, run and preview of Sundial's calendar schedules.",
-            // The old name, for 0.2.x only.
-            java.util.List.of("almanac")));
+            "Status, run and preview of Sundial's calendar schedules."));
     }
 
     private void load() {
