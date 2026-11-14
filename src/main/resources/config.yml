@@ -1,8 +1,8 @@
-# Almanac runs console commands on a calendar. Apply changes with /almanac reload.
+# Sundial runs console commands on a calendar. Apply changes with /sundial reload.
 #
 # Each schedule runs once a month, on the 1st, no earlier than not-before, in this time zone. If the server is off
 # then, it runs at the next start. A schedule with a quiet area waits while anyone is inside it, checking again every
-# retry-minutes, and runs anyway after give-up-after-hours. Almanac only logs to the console; it tells nobody in game.
+# retry-minutes, and runs anyway after give-up-after-hours. Sundial only logs to the console; it tells nobody in game.
 timezone: "UTC"                 # a zone name, such as Pacific/Honolulu
 
 schedules: {}

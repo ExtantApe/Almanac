@@ -1,4 +1,4 @@
-// Almanac on a throwaway Paper server, with a fake clock so months pass in seconds. Built in a temp folder on
+// Sundial on a throwaway Paper server, with a fake clock so months pass in seconds. Built in a temp folder on
 // 127.0.0.1:25622 and deleted after. One schedule runs a plain marker command; the other runs a copy of a real monthly
 // data pack, with a quiet area that a bot stands in.
 //
@@ -23,7 +23,7 @@ const PACK = process.env.AL_TEST_PACK ?? new URL('./fixture-pack', import.meta.u
 if (![os.tmpdir(), '/tmp', '/private/tmp', '/var/folders'].map(p => path.resolve(p)).some(t => RUN.startsWith(t + path.sep))) throw new Error('AL_TEST_RUN must be under a temp folder')
 if (!/^eula=true$/m.test(readFileSync(EULA, 'utf8'))) throw new Error('That eula.txt isn\'t accepted.')
 const ROOT = new URL('../', import.meta.url).pathname
-const JAR = readdirSync(path.join(ROOT, 'build/libs')).find(f => /^Almanac-[\d.]+\.jar$/.test(f))
+const JAR = readdirSync(path.join(ROOT, 'build/libs')).find(f => /^Sundial-[\d.]+\.jar$/.test(f))
 if (!JAR) throw new Error('Run ./gradlew build first')
 const NS = readdirSync(path.join(PACK, 'data')).find(d => existsSync(path.join(PACK, 'data', d, 'function/rotate')))
 if (!NS) throw new Error('No data/<namespace>/function/rotate in ' + PACK)
@@ -34,13 +34,13 @@ const strip = l => l.replace(/^\[[\d:]+ \w+\]: /, '')
 const results = []
 const check = (name, ok, detail = '') => { results.push(ok); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail ? '  (' + detail + ')' : ''}`) }
 
-const dir = path.join(RUN, 'almanac-' + PAPER)
+const dir = path.join(RUN, 'sundial-' + PAPER)
 rmSync(dir, { recursive: true, force: true })
-mkdirSync(path.join(dir, 'plugins/Almanac'), { recursive: true })
+mkdirSync(path.join(dir, 'plugins/Sundial'), { recursive: true })
 copyFileSync(jar(new RegExp('^paper-' + PAPER.replace(/\./g, '\\.') + '\\.jar$')), path.join(dir, 'paper.jar'))
 copyFileSync(EULA, path.join(dir, 'eula.txt'))
 for (const re of [/^multiverse-core-.*\.jar$/, ...(VIA ? [/^ViaVersion-.*\.jar$/, /^ViaBackwards-.*\.jar$/] : [])]) { const j = jar(re); copyFileSync(j, path.join(dir, 'plugins', path.basename(j))) }
-copyFileSync(path.join(ROOT, 'build/libs', JAR), path.join(dir, 'plugins/Almanac.jar'))
+copyFileSync(path.join(ROOT, 'build/libs', JAR), path.join(dir, 'plugins/Sundial.jar'))
 writeFileSync(path.join(dir, 'server.properties'), ['server-ip=127.0.0.1', `server-port=${PORT}`, 'online-mode=false', 'white-list=false', 'enforce-whitelist=false', 'level-type=minecraft\\:flat',
   'generate-structures=false', 'spawn-protection=0', 'difficulty=peaceful', 'spawn-monsters=false', 'view-distance=4', 'simulation-distance=4'].join('\n') + '\n')
 const CLOCK = path.join(dir, 'test-clock.txt')
@@ -48,7 +48,7 @@ const setClock = iso => writeFileSync(CLOCK, new Date(iso).toISOString())
 const CONFIG = (extra = '') => `timezone: "America/New_York"
 schedules:
   marker:
-    command: "say almanac-marker {month0} {month} {year}"
+    command: "say sundial-marker {month0} {month} {year}"
   course:
     command: "function ${NS}:rotate/to {n:{month0}}"
     quiet:
@@ -57,13 +57,13 @@ schedules:
       retry-minutes: 5
       give-up-after-hours: 6
 ${extra}`
-writeFileSync(path.join(dir, 'plugins/Almanac/config.yml'), CONFIG('  broken:\n    command: "say {weekday}"\n'))
+writeFileSync(path.join(dir, 'plugins/Sundial/config.yml'), CONFIG('  broken:\n    command: "say {weekday}"\n'))
 
 const log = []
 let proc, exited
 async function start() {
   const from = log.length
-  proc = spawn(JAVA, ['-Xms1536M', '-Xmx1536M', '-Dterminal.jline=false', '-Dterminal.ansi=false', `-Dalmanac.test.clockFile=${CLOCK}`, '-Dalmanac.test.checkTicks=20',
+  proc = spawn(JAVA, ['-Xms1536M', '-Xmx1536M', '-Dterminal.jline=false', '-Dterminal.ansi=false', `-Dsundial.test.clockFile=${CLOCK}`, '-Dsundial.test.checkTicks=20',
     '-jar', 'paper.jar', 'nogui'], { cwd: dir, stdio: ['pipe', 'pipe', 'pipe'] })
   exited = new Promise(r => proc.on('exit', r))
   process.on('exit', () => { if (proc.exitCode === null) proc.kill('SIGKILL') })
@@ -90,18 +90,18 @@ try {
   await ask(`mv create lobby normal --world-type flat --no-structures`, 8000)
   cpSync(PACK, path.join(dir, 'world/datapacks', path.basename(PACK)), { recursive: true })
   await ask('reload confirm', 6000)
-  await ask('almanac reload', 1500)
+  await ask('sundial reload', 1500)
   check('a bad schedule is reported with its fix, and skipped', log.some(l => /Schedule broken uses \{weekday}.*\{month0}.*skipped; the others still run/.test(l)))
   check('a first install applies the current month', ran(/Schedule marker ran for 2026-11/) === 1, String(ran(/Schedule marker ran/)))
 
   let from = await moveTo('2026-12-01T03:30:00-05:00')
   check('nothing runs before 04:00 on the 1st', ran(/Schedule marker ran for 2026-12/, from) === 0)
   from = await moveTo('2026-12-01T04:01:00-05:00')
-  check('after 04:00 on the 1st it runs once, with the right month', ran(/Schedule marker ran for 2026-12 \([^)]*\): say almanac-marker 11 12 2026/, from) === 1)
+  check('after 04:00 on the 1st it runs once, with the right month', ran(/Schedule marker ran for 2026-12 \([^)]*\): say sundial-marker 11 12 2026/, from) === 1)
   check('the data pack schedule ran too, with nobody on the course', ran(/Schedule course ran for 2026-12/, from) === 1)
-  const st = (await ask('almanac status', 1200)).join(' | ')
+  const st = (await ask('sundial status', 1200)).join(' | ')
   check('status shows what was applied and what\'s next', /marker: applied 2026-12 \(dispatched/.test(st) && /next 2027-01-01 04:00/.test(st), st.slice(0, 220))
-  const pv = (await ask('almanac preview course 3', 800)).join(' ')
+  const pv = (await ask('sundial preview course 3', 800)).join(' ')
   check('preview shows the command for a month without running it', new RegExp(`rotate/to \\{n:2\\} \\(not run\\)`).test(pv) && !log.some(l => /Schedule course ran for 2026-03/.test(l)), pv.slice(0, 160))
 
   // Restart mid-month: nothing runs. Then off over the 1st: it catches up once at the next start.
@@ -114,7 +114,7 @@ try {
   setClock('2027-02-10T12:00:00-05:00')
   from = log.length
   await start(); await sleep(2000)
-  check('off over the 1st: it catches up once at the next start, for the current month', ran(/Schedule marker ran for 2027-02 \([^)]*\): say almanac-marker 1 2 2027/, from) === 1 && ran(/Schedule marker ran/, from) === 1)
+  check('off over the 1st: it catches up once at the next start, for the current month', ran(/Schedule marker ran for 2027-02 \([^)]*\): say sundial-marker 1 2 2027/, from) === 1 && ran(/Schedule marker ran/, from) === 1)
 
   // The quiet rule, with a bot on the course.
   const b = mineflayer.createBot({ host: '127.0.0.1', port: PORT, username: 'Runner', version: '26.1', auth: 'offline', viewDistance: 'tiny', hideErrors: true, physicsEnabled: false })
@@ -146,11 +146,11 @@ try {
 
   // Running the same month again is harmless: the data pack makes repeats a no-op.
   from = log.length
-  const r1 = (await ask('almanac run course', 2500)).join(' ')
-  check('/almanac run applies the current month now, and running it again is harmless', /Ran course: function .*rotate\/to \{n:4\}/.test(r1) && !log.slice(from).some(l => /ERROR|Exception/.test(l)), r1.slice(0, 160))
-  check('no Almanac errors in the log', !log.some(l => /Almanac/.test(l) && /(ERROR|Exception|SEVERE)/.test(l)))
-  const rec = readFileSync(path.join(dir, 'plugins/Almanac/applied.yml'), 'utf8')
-  check('applied.yml is plain YAML with each schedule\'s period, and no temp file is left', /course:\n  period: 2027-05/.test(rec) && !existsSync(path.join(dir, 'plugins/Almanac/applied.yml.tmp')), rec.slice(0, 160))
+  const r1 = (await ask('sundial run course', 2500)).join(' ')
+  check('/sundial run applies the current month now, and running it again is harmless', /Ran course: function .*rotate\/to \{n:4\}/.test(r1) && !log.slice(from).some(l => /ERROR|Exception/.test(l)), r1.slice(0, 160))
+  check('no Sundial errors in the log', !log.some(l => /Sundial/.test(l) && /(ERROR|Exception|SEVERE)/.test(l)))
+  const rec = readFileSync(path.join(dir, 'plugins/Sundial/applied.yml'), 'utf8')
+  check('applied.yml is plain YAML with each schedule\'s period, and no temp file is left', /course:\n  period: 2027-05/.test(rec) && !existsSync(path.join(dir, 'plugins/Sundial/applied.yml.tmp')), rec.slice(0, 160))
 } catch (e) { check('the run finished', false, e.message); for (const l of log.filter(l => /error|missing|unbound|registry|failed to|> |runner|lost connection|kick|disconnect|via/i.test(l) && !/^\s+at /.test(l)).slice(0, 25)) console.log('  | ' + l) } finally { await stop(); rmSync(dir, { recursive: true, force: true }) }
 const failed = results.filter(r => !r).length
 console.log(`${results.length - failed}/${results.length} passed`)

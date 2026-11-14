@@ -1,4 +1,4 @@
-package com.extantape.almanac;
+package com.extantape.sundial;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

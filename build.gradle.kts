@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.extantape"
-version = "0.1.0"
+version = "0.2.0"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
@@ -39,4 +39,4 @@ tasks.processResources {
 
 tasks.test { useJUnitPlatform() }
 
-tasks.jar { archiveBaseName.set("Almanac") }
+tasks.jar { archiveBaseName.set("Sundial") }

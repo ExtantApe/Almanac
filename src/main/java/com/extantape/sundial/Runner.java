@@ -1,4 +1,4 @@
-package com.extantape.almanac;
+package com.extantape.sundial;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -86,7 +86,7 @@ final class Runner {
             log.log(Level.WARNING, "Schedule " + s.name() + " ran, but applied.yml couldn't be written; it may run again at the next start.", e);
         }
         if (ok) log.info("Schedule " + s.name() + " ran for " + period + " (" + why + "): " + command);
-        else log.warning("Schedule " + s.name() + " failed for " + period + ": " + command + ". It's recorded, and runs again next month or with /almanac run.");
+        else log.warning("Schedule " + s.name() + " failed for " + period + ": " + command + ". It's recorded, and runs again next month or with /sundial run.");
         return command;
     }
 

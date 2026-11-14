@@ -1,1 +1,1 @@
-{"pack": {"description": "Almanac test fixture: a stand-in for a monthly rotation pack", "min_format": [80, 0], "max_format": [999, 0]}}
+{"pack": {"description": "Sundial test fixture: a stand-in for a monthly rotation pack", "min_format": [80, 0], "max_format": [999, 0]}}

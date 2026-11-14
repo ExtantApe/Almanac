@@ -1,4 +1,4 @@
-package com.extantape.almanac;
+package com.extantape.sundial;
 
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Almanac's config, checked. A schedule with a problem is left out with one line saying why and how to fix it; the
+ * Sundial's config, checked. A schedule with a problem is left out with one line saying why and how to fix it; the
  * others still run. Nothing about any particular server lives in code: worlds, boxes and commands come from config.
  */
 record Settings(ZoneId zone, Map<String, Schedule> schedules, List<String> problems) {
@@ -63,7 +63,7 @@ record Settings(ZoneId zone, Map<String, Schedule> schedules, List<String> probl
     /** What's wrong with one schedule, as the end of a sentence with its fix, or null. */
     static String problemOf(String name, ConfigurationSection s) {
         if (!NAME.matcher(name).matches()) return "needs a name of 1 to 32 lowercase letters, digits or dashes.";
-        for (String k : s.getKeys(false)) if (!KEYS.contains(k)) return "has a setting Almanac doesn't know, " + k + ". Fix: remove it or check its spelling.";
+        for (String k : s.getKeys(false)) if (!KEYS.contains(k)) return "has a setting Sundial doesn't know, " + k + ". Fix: remove it or check its spelling.";
         String every = s.getString("every", "month");
         if (!every.equals("month")) return "says every: " + every + ", but only month is supported so far.";
         String command = s.getString("command", "");
@@ -71,13 +71,13 @@ record Settings(ZoneId zone, Map<String, Schedule> schedules, List<String> probl
         if (command.startsWith("/")) return "has a command starting with /. Fix: leave the slash out; it runs as the console.";
         Matcher m = PLACEHOLDER.matcher(command);
         while (m.find()) if (!PLACEHOLDERS.contains(m.group(1)))
-            return "uses {" + m.group(1) + "}, which Almanac doesn't fill in. Fix: use {month0} (0-11), {month} (1-12) or {year}.";
+            return "uses {" + m.group(1) + "}, which Sundial doesn't fill in. Fix: use {month0} (0-11), {month} (1-12) or {year}.";
         try { LocalTime.parse(s.getString("not-before", "04:00")); }
         catch (DateTimeParseException e) { return "has not-before \"" + s.getString("not-before") + "\". Fix: use a 24-hour time like 04:00."; }
         ConfigurationSection q = s.getConfigurationSection("quiet");
         if (s.contains("quiet") && q == null) return "has a quiet setting that isn't a section.";
         if (q != null) {
-            for (String k : q.getKeys(false)) if (!QUIET_KEYS.contains(k)) return "has a quiet setting Almanac doesn't know, " + k + ".";
+            for (String k : q.getKeys(false)) if (!QUIET_KEYS.contains(k)) return "has a quiet setting Sundial doesn't know, " + k + ".";
             if (q.getString("world", "").isBlank()) return "has a quiet rule with no world.";
             List<?> box = q.getList("box");
             if (box == null || box.size() != 6 || !box.stream().allMatch(v -> v instanceof Integer))
