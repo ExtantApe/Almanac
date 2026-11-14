@@ -46,7 +46,7 @@ All need `sundial.admin`, which operators have by default.
 
 ## Testing
 
-`./gradlew test` runs the unit tests. `test/acceptance.mjs` runs the bot test on a throwaway server; the top of the file says what it needs. The launch flags `-Dalmanac.test.clockFile` and `-Dalmanac.test.checkTicks` are for throwaway test servers only.
+`./gradlew test` runs the unit tests. `test/acceptance.mjs` runs the bot test on a throwaway server; the top of the file says what it needs. The launch flags `-Dsundial.test.clockFile` and `-Dsundial.test.checkTicks` are for throwaway test servers only.
 
 ## License
 
