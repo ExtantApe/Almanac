@@ -1,9 +1,14 @@
-name: Almanac
+name: Sundial
 version: '${version}'
-main: com.extantape.almanac.AlmanacPlugin
+main: com.extantape.sundial.SundialPlugin
 api-version: '26.1'
 description: Runs server commands on a calendar, waiting for a quiet moment and catching up after downtime.
 permissions:
-  almanac.admin:
-    description: See, run and preview Almanac's schedules.
+  sundial.admin:
+    description: See, run and preview Sundial's schedules.
     default: op
+  almanac.admin:
+    description: The old name for sundial.admin, from before the rename (D194). It grants sundial.admin, still works in 0.2.x, and is removed in the next release.
+    default: false
+    children:
+      sundial.admin: true

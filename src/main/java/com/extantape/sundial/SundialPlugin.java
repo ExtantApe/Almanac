@@ -1,4 +1,4 @@
-package com.extantape.almanac;
+package com.extantape.sundial;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -24,12 +24,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-public final class AlmanacPlugin extends JavaPlugin {
-    static final String ADMIN = "almanac.admin";
+public final class SundialPlugin extends JavaPlugin {
+    static final String ADMIN = "sundial.admin";
     /** Test only, set at launch: a file holding the time to use instead of the clock, so months pass in seconds. */
-    private static final String TEST_CLOCK = "almanac.test.clockFile";
+    private static final String TEST_CLOCK = "sundial.test.clockFile";
     /** Test only: how often to check, in ticks, instead of once a minute. */
-    private static final String TEST_CHECK = "almanac.test.checkTicks";
+    private static final String TEST_CHECK = "sundial.test.checkTicks";
     private static final DateTimeFormatter WHEN = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 
     private Settings settings;
@@ -39,6 +39,9 @@ public final class AlmanacPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Renamed from Almanac (D194): bring its folder across once, before anything reads the config.
+        String moved = Migration.copyIfMissing(getDataFolder().toPath().resolveSibling("Almanac"), getDataFolder().toPath());
+        if (moved != null) getLogger().warning(moved);
         saveDefaultConfig();
         String clockFile = System.getProperty(TEST_CLOCK);
         if (clockFile != null) {
@@ -49,7 +52,7 @@ public final class AlmanacPlugin extends JavaPlugin {
         try {
             records = new Records(getDataFolder().toPath().resolve("applied.yml"));
         } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "applied.yml can't be read, so Almanac runs nothing until it's fixed or removed.", e);
+            getLogger().log(Level.SEVERE, "applied.yml can't be read, so Sundial runs nothing until it's fixed or removed.", e);
             return;
         }
         load();
@@ -57,7 +60,7 @@ public final class AlmanacPlugin extends JavaPlugin {
         // A tick later, so every plugin's worlds are loaded before the first check (and the catch-up after downtime).
         Bukkit.getScheduler().runTaskTimer(this, () -> runner.check(), 1L, every);
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, e -> e.registrar().register(
-            Commands.literal("almanac").requires(s -> s.getSender().hasPermission(ADMIN))
+            Commands.literal("sundial").requires(s -> s.getSender().hasPermission(ADMIN))
                 .then(Commands.literal("status").executes(c -> { status(c.getSource().getSender()); return Command.SINGLE_SUCCESS; }))
                 .then(Commands.literal("reload").executes(c -> { reload(c.getSource().getSender()); return Command.SINGLE_SUCCESS; }))
                 .then(Commands.literal("run").then(Commands.argument("schedule", StringArgumentType.word())
@@ -67,7 +70,9 @@ public final class AlmanacPlugin extends JavaPlugin {
                     .suggests((c, b) -> { settings.schedules().keySet().forEach(b::suggest); return b.buildFuture(); })
                     .then(Commands.argument("month", IntegerArgumentType.integer(1, 12)).executes(this::preview))))
                 .build(),
-            "Status, run and preview of Almanac's calendar schedules."));
+            "Status, run and preview of Sundial's calendar schedules.",
+            // The old name, for 0.2.x only.
+            java.util.List.of("almanac")));
     }
 
     private void load() {
@@ -98,7 +103,7 @@ public final class AlmanacPlugin extends JavaPlugin {
 
     private void status(CommandSender to) {
         Instant now = clock.get();
-        tell(to, "Almanac: " + settings.schedules().size() + " schedule(s), time zone " + settings.zone() + ", now " + WHEN.format(now.atZone(settings.zone())) + ".");
+        tell(to, "Sundial: " + settings.schedules().size() + " schedule(s), time zone " + settings.zone() + ", now " + WHEN.format(now.atZone(settings.zone())) + ".");
         for (String p : settings.problems()) tell(to, p, NamedTextColor.RED);
         for (Settings.Schedule s : settings.schedules().values()) {
             Records.Entry last = records.last(s.name());
@@ -115,7 +120,7 @@ public final class AlmanacPlugin extends JavaPlugin {
     private int run(CommandContext<CommandSourceStack> c) {
         CommandSender to = c.getSource().getSender();
         Settings.Schedule s = settings.schedules().get(StringArgumentType.getString(c, "schedule"));
-        if (s == null) { tell(to, "There's no schedule called that. /almanac status lists them.", NamedTextColor.RED); return 0; }
+        if (s == null) { tell(to, "There's no schedule called that. /sundial status lists them.", NamedTextColor.RED); return 0; }
         String ran = runner.run(s, Calendar.periodOf(clock.get(), settings.zone()), "run by " + to.getName());
         tell(to, "Ran " + s.name() + ": " + ran);
         return Command.SINGLE_SUCCESS;
@@ -124,7 +129,7 @@ public final class AlmanacPlugin extends JavaPlugin {
     private int preview(CommandContext<CommandSourceStack> c) {
         CommandSender to = c.getSource().getSender();
         Settings.Schedule s = settings.schedules().get(StringArgumentType.getString(c, "schedule"));
-        if (s == null) { tell(to, "There's no schedule called that. /almanac status lists them.", NamedTextColor.RED); return 0; }
+        if (s == null) { tell(to, "There's no schedule called that. /sundial status lists them.", NamedTextColor.RED); return 0; }
         YearMonth month = YearMonth.of(Calendar.periodOf(clock.get(), settings.zone()).getYear(), IntegerArgumentType.getInteger(c, "month"));
         tell(to, s.name() + " for " + month + " would run: " + Calendar.render(s.command(), month) + " (not run)");
         return Command.SINGLE_SUCCESS;

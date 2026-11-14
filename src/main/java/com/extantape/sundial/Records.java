@@ -1,4 +1,4 @@
-package com.extantape.almanac;
+package com.extantape.sundial;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -43,7 +43,7 @@ final class Records {
     void save(String schedule, Entry e) throws IOException {
         entries.put(schedule, e);
         YamlConfiguration y = new YamlConfiguration();
-        y.options().setHeader(java.util.List.of("What each Almanac schedule last applied. Written by Almanac; safe to read."));
+        y.options().setHeader(java.util.List.of("What each Sundial schedule last applied. Written by Sundial; safe to read."));
         entries.forEach((k, v) -> {
             y.set(k + ".period", v.period().toString());
             y.set(k + ".at", v.at().toString());

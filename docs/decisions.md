@@ -10,3 +10,7 @@ Dated decisions for this repo, newest last.
   - Commands: "status, run, preview (Recommended)", for admins only (`almanac.admin`, op by default).
   - Notify: "Console log only (Recommended)". Almanac tells nobody in game; the data pack announces the new course itself.
   - All four are settings in `config.yml`, with these as the defaults.
+
+## 2026-11-14
+
+- **Name (owner, D194):** Almanac is renamed Sundial, because a Minecraft mod with about 22.7 million downloads already uses the name Almanac. The owner chose "Rename to Sundial (Recommended)". Released as 0.2.0. The old folder is copied on first start, and `/almanac` and `almanac.admin` keep working for 0.2.x.

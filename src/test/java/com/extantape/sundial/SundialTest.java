@@ -1,4 +1,4 @@
-package com.extantape.almanac;
+package com.extantape.sundial;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import static org.junit.jupiter.api.Assertions.*;
 
 /** The calendar, the config checks and the quiet rule, with a fake clock. The real server is in the bot test. */
-class AlmanacTest {
+class SundialTest {
     static final ZoneId HNL = ZoneId.of("Pacific/Honolulu"), NY = ZoneId.of("America/New_York");
     static final Settings.Schedule PLAIN = new Settings.Schedule("course", "function x:to {n:{month0}}", LocalTime.of(4, 0), null);
 

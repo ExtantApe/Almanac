@@ -1,4 +1,4 @@
-# Almanac
+# Sundial
 
 Registered in the owner's ops process (`~/Code/ops`). Area: `minecraft-plugins`. Created 2026-11-09 from the ops starter kit.
 
